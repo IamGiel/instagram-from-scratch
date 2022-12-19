@@ -1,6 +1,28 @@
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
+const { MONGO_URI } = require('./keys');
+
+
+
+
+mongoose.set('strictQuery', false);
+mongoose.connect(MONGO_URI)
+
+mongoose.connection.on('connected', ()=> {
+  console.log("mongo connected! ")
+})
+mongoose.connection.on('error', (err)=> {
+  console.log("mongo connection error! ", err)
+})
+
 const PORT = 5000;
+
+require('./models/user');
+app.use(express.json())
+app.use(require('./route/auth'))
+
+// mongo uri: mongodb+srv://test:<password>@cluster0.iy2o1qb.mongodb.net/?retryWrites=true&w=majority
 
 const middleware = (req,res,next) => {
   console.log('middleware executed! ')
