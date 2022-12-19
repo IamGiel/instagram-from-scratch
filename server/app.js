@@ -22,7 +22,6 @@ require('./models/user');
 app.use(express.json())
 app.use(require('./route/auth'))
 
-// mongo uri: mongodb+srv://test:<password>@cluster0.iy2o1qb.mongodb.net/?retryWrites=true&w=majority
 
 const middleware = (req,res,next) => {
   console.log('middleware executed! ')
