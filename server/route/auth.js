@@ -4,10 +4,31 @@ const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {JWT_SECRET} = require('../keys');
+const dotenv = require("dotenv");
+const { AUTHENTICATEv2 } = require("../middlewares/authenticate");
 
-router.get('/', (req,res,next)=> {
-  res.send('Hello home route')
+dotenv.config();
+
+const AUTHENTICATE = (req,res,next) => {
+  // console.log(req.headers)
+  // console.log(req.headers.authorization)
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  if(!token){
+    return res.status(401).json({error:'You need to be signed in!', status:'FAILED'})
+  } else {
+    // verify token
+    jwt.verify(token, process.env.JWT_SECRET, (tokenError,usr) => {
+      if(tokenError) {
+        return res.status(401).json({error:'You need to be signed in, token error!', status:'FAILED'})
+      }
+      next()
+    })
+  }
+}
+
+router.get('/protected', AUTHENTICATEv2, (req,res,next)=> {
+  res.send('Hello protected route')
 })
 router.post('/signup', (req,res)=> {
   const {name, email, password } = req.body;
