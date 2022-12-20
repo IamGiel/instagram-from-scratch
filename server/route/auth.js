@@ -41,12 +41,6 @@ router.post('/signup', (req,res)=> {
 
 router.post('/signin', (req,res,next)=> {
   const {email, password} = req.body;
-  // if(!email || !password){
-  //   return res.status(401).json({error:'Please provide correct email and password', status:'FAILED'})
-  // }
-  // return res.status(200).json({success:'Sign in success!', status:'SUCCESS'})
-  // check mongodb for existing user meail and matching password
-  
   User.findOne({ email }).then(usr=>{
     console.log(usr)
    
@@ -63,15 +57,14 @@ router.post('/signin', (req,res,next)=> {
         }
         
       });
-
     } else {
       return res.status(401).json({error:'Something wrong with the entered credentials!', status:'FAILED'})
     }
-  }).catch(err=>{
+  })
+  .catch(err=>{
     console.log(err)
     return res.status(401).json({error:'Email mismatch!', status:'FAILED'})
   })
-
 })
 
 module.exports = router;
