@@ -1,8 +1,10 @@
-const express = require("express")
+const express = require("express");
 const router = express();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const {JWT_SECRET} = require('../keys');
 
 router.get('/', (req,res,next)=> {
   res.send('Hello home route')
@@ -38,22 +40,24 @@ router.post('/signup', (req,res)=> {
     })
 
 })
-
 router.post('/signin', (req,res,next)=> {
   const {email, password} = req.body;
-  User.findOne({ email }).then(usr=>{
-    console.log(usr)
+  User.findOne({ email }).then(savedUser=>{
+    console.log(savedUser)
    
-    if(usr.email == email){
+    if(savedUser.email == email){
       // check password
       // Load hash from your password DB.
-      bcrypt.compare(password, usr.password, function(err, response) {
+      bcrypt.compare(password, savedUser.password, function(err, isMatch) {
         // res === true
-        console.log('password is match? ', response)
-        if(response){
-          return res.status(200).json({success:'success login!', status:'SUCCESS'})
+        console.log('password is match? ', isMatch)
+        if(isMatch){
+          // return res.status(200).json({success:'password matched!', status:'SUCCESS'})
+          // give the user a token 
+          const tok = jwt.sign({_id:savedUser._id}, JWT_SECRET)
+          res.json({token:tok})
         } else {
-          return res.status(401).json({error:'pssword mismatch!', status:'FAILED'})
+          return res.status(401).json({error:'password mismatch!', status:'FAILED'})
         }
         
       });
@@ -66,5 +70,4 @@ router.post('/signin', (req,res,next)=> {
     return res.status(401).json({error:'Email mismatch!', status:'FAILED'})
   })
 })
-
 module.exports = router;
