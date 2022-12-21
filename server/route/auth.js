@@ -2,7 +2,7 @@ const express = require("express");
 const router = express();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
 const { AUTHENTICATEv2 } = require("../middlewares/authenticate");
@@ -28,6 +28,7 @@ const AUTHENTICATE = (req,res,next) => {
 }
 
 router.get('/protected', AUTHENTICATEv2, (req,res,next)=> {
+  console.log('req.user: ',req.user)
   res.send('Hello protected route')
 })
 router.post('/signup', (req,res)=> {
@@ -75,7 +76,7 @@ router.post('/signin', (req,res,next)=> {
         if(isMatch){
           // return res.status(200).json({success:'password matched!', status:'SUCCESS'})
           // give the user a token 
-          const tok = jwt.sign({_id:savedUser._id}, JWT_SECRET)
+          const tok = jwt.sign({_id:savedUser._id}, process.env.JWT_SECRET)
           res.json({token:tok})
         } else {
           return res.status(401).json({error:'password mismatch!', status:'FAILED'})

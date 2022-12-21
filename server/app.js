@@ -3,9 +3,6 @@ const app = express();
 const mongoose = require('mongoose');
 const { MONGO_URI } = require('./keys');
 
-
-
-
 mongoose.set('strictQuery', false);
 mongoose.connect(MONGO_URI)
 
@@ -19,26 +16,27 @@ mongoose.connection.on('error', (err)=> {
 const PORT = 5000;
 
 require('./models/user');
+require('./models/post');
 app.use(express.json())
 app.use(require('./route/auth'))
+app.use(require('./route/post'))
 
-
-const middleware = (req,res,next) => {
-  console.log('middleware executed! ')
-  next()
-}
+// const middleware = (req,res,next) => {
+//   console.log('middleware executed! ')
+//   next()
+// }
 
 // app.use(middleware);
 
-app.get('/about',(req,res)=> {
-  console.log('About')
-  return res.send(`About Page`)
-})
+// app.get('/about',(req,res)=> {
+//   console.log('About')
+//   return res.send(`About Page`)
+// })
 
-app.get('/', middleware, (req,res)=> {
-  console.log('home')
-  return res.send(`Hello world 🌍`)
-})
+// app.get('/', middleware, (req,res)=> {
+//   console.log('home')
+//   return res.send(`Hello world 🌍`)
+// })
 
 
 
