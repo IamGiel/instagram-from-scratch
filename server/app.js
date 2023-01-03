@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
+const cors = require('cors')
+app.use(cors())
+app.use(express.json())
 const mongoose = require('mongoose');
 const { MONGO_URI } = require('./keys');
 
 mongoose.set('strictQuery', false);
+mongoose.set('debug', true);
 mongoose.connect(MONGO_URI)
 
 mongoose.connection.on('connected', ()=> {
@@ -17,7 +21,7 @@ const PORT = 5000;
 
 require('./models/user');
 require('./models/post');
-app.use(express.json())
+
 app.use(require('./route/auth'))
 app.use(require('./route/post'))
 

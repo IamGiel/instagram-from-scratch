@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { stringify } = require("querystring");
-const {ObjectId} = mongoose.Schema.Types
+const {ObjectId,Mixed} = mongoose.Schema.Types
 
 const PostSchema = new mongoose.Schema({
   title:{
@@ -13,11 +13,15 @@ const PostSchema = new mongoose.Schema({
   },
   postedBy:{
     type:ObjectId,
-    required:true
+    ref:'User'
   },
   photo:{
     type:String,
     default:'No photo yet'
+  },
+  date:{
+    type:String,
+    required:true
   }
 })
 

@@ -20,16 +20,15 @@ const AUTHENTICATEv2 = (req,res,next) => {
         return res.status(401).json({error:'You need to be signed in, token error!', status:'FAILED'})
       }
 
-      const {_id} = payload;
-      User.findById(_id).then(hasUser=> {
-        if(hasUser){
-          console.log('this is hasUser ', hasUser)
-          req.user = hasUser;
-          next()
-        } else {
-          return res.status(401).json({error:'You need to be signed in, token error!', status:'FAILED'})
-        }
-      })
+      const {_id} = payload
+        User.findById(_id).then(userdata=>{
+            req.user = userdata
+            if(req.user){
+              next()
+            } else {
+              return res.status(401).json({error:'You need to be signed in!', status:'FAILED'})
+            }
+        })
     })
   }
 }

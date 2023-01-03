@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express();
+const cors = require('cors')
+router.use(cors())
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const bcrypt = require('bcryptjs'); 
@@ -33,6 +35,7 @@ router.get('/protected', AUTHENTICATEv2, (req,res,next)=> {
 })
 router.post('/signup', (req,res)=> {
   const {name, email, password } = req.body;
+  if(!name || !email || !password ) return res.status(422).json({error:'please add all fields required'}) 
   User.findOne({email})
     .then((savedUser)=>{
       console.log(savedUser)
@@ -79,7 +82,7 @@ router.post('/signin', (req,res,next)=> {
           const tok = jwt.sign({_id:savedUser._id}, process.env.JWT_SECRET)
           res.json({token:tok})
         } else {
-          return res.status(401).json({error:'password mismatch!', status:'FAILED'})
+          res.status(401).json({error:'password mismatch!', status:'FAILED'})
         }
         
       });
@@ -88,7 +91,7 @@ router.post('/signin', (req,res,next)=> {
     }
   })
   .catch(err=>{
-    console.log(err)
+    console.log('error block on signin')
     return res.status(401).json({error:'Email mismatch!', status:'FAILED'})
   })
 })
