@@ -34,38 +34,39 @@ router.get('/mypost',AUTHENTICATEv2, (req,res,next)=> {
 
 router.post('/createPost', AUTHENTICATEv2, (req,res,next)=> {
 
-  // title,
-  // description,
-  // imageURL,
-  // assigned,
-  // labelled,
-  // date:new Date(),
-  // postedBy:'This User'  
-
-
-  const {title, description, postedBy, imageURL, date, labelled, assigned } = req.body
+  const {title, description, postedBy, imageURL, date, labelled, assigned, imageTitle } = req.body
   const user = req.user;
+
+  console.log(req.body)
+  
   if(user && user.password){
     user.password = undefined;
   }
-  if(!title && !description && !postedBy&& !imageURL&& !date&& !labelled&& !assigned) return res.json({error:'Missing required fields', status:'FAILED'})
+  if(!title || !description || !imageURL|| !imageTitle|| !date|| !labelled|| !assigned) {
+    return res.json({error:'Missing required fields', status:'FAILED'})
+  }
 
   Post.find({"postedByObj":req.user._id}) 
   .populate('postedBy')
-  .then(p=> {3w4ed
-    // res.json(posts)
-    console.log('here is p ', p)
+  .then(p=> {
+    console.log('here is p ', user)
+    
     const post = new Post({
       title,
       description,
       postedBy:user,
-      imageURL:faker?.image?.business(123, 123),
-      date:new Date()
+      imageTitle,
+      imageURL,
+      date,
+      labelled,
+      assigned
     })
 
-    
+    console.log('testing here  ', post)
 
+    console.log('post save is next')
     post.save().then(savePost=> {
+      console.log('saved post data >>>>>>> ', savePost)
       return res.json({success:'successfull post!',status:'SUCCESS', createdPost: post})
     }).catch(err=>{
       console.log(err)

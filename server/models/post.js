@@ -7,7 +7,7 @@ const PostSchema = new mongoose.Schema({
     type:String,
     required:true
   },
-  body:{
+  description:{
     type:String,
     required:true
   },
@@ -15,14 +15,44 @@ const PostSchema = new mongoose.Schema({
     type:ObjectId,
     ref:'User'
   },
-  photo:{
+  imageURL:{
+    type:String,
+    default:'No photo yet'
+  },
+  imageTitle:{
     type:String,
     default:'No photo yet'
   },
   date:{
     type:String,
     required:true
+  },
+  assigned:{
+    name:{
+      type:String,
+      required:true
+    },
+    value:{
+      type:String,
+      required:true
+    },
+    avatar:{
+      type:String,
+      required:true
+    },
+   
+  },
+  labelled:{
+    name:{
+      type:String,
+      required:true
+    },
+    value:{
+      type:String,
+      required:true
+    },
   }
 })
+
 
 mongoose.model('Post', PostSchema);

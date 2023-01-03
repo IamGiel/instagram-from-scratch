@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Menu, Popover, Transition, Disclosure } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
@@ -9,8 +9,24 @@ function classNames(...classes) {
 }
 
 export const Navbar = () => {
-  console.log('Navbar Com sadad p');
+  // console.log('Navbar Com sadad p');
   const navigate = useNavigate();
+
+  const [user, setUser] = useState(null)
+  const [login, setLogin] = useState(null)
+
+  useEffect(() => {
+    const loggedUser = localStorage.getItem('user');
+    const isLoggedIn = localStorage.getItem('isLogin');
+    setLogin(isLoggedIn)
+    setUser(JSON.parse(loggedUser))
+    console.log(JSON.parse(loggedUser))
+    console.log(isLoggedIn)
+    
+  },[login])
+
+  
+  
 
   const handleClick = (evt, linkto) => {
     
@@ -20,18 +36,43 @@ export const Navbar = () => {
     navigate(`/${linkto}`);
   }
 
+  const logout = (e) => {
+    e.preventDefault()
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('isLogin')
+    setLogin(false)
+  }
+
   const navigation = [
-    {'name':'Home','href':'home'},
-    {'name':'Create','href':'create'},
-    {'name':'Blog','href':'blog'},
-    {'name':'Login','href':'login'},
-    {'name':'Signup','href':'signup'}
+    {'name':'Home','href':'home', 'show':true},
+    {'name':'Create','href':'create', 'show':login ? true : 'false'},
+    {'name':'Blog','href':'blog', 'show':true},
+    {'name':'Login','href':'login', 'show':login ? 'false' : true},
+    // {'name':'Signup','href':'signup','show':user?.name ? false : true}
   ]
+
+  const BUTTON = (item) => {
+    return (
+      <button
+        type='button'
+        onClick={(e)=>handleClick(e,item.href)}
+        className={classNames(
+        item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+        'px-3 py-2 rounded-md text-sm font-medium'
+      )}
+      aria-current={item.current ? 'page' : undefined}
+    >
+      {item.name}
+    </button>
+    )
+  }
 
   return (
     <Disclosure as="nav" className="bg-gray-800 m-[12px] p-[12px]">
       {({ open }) => (
         <>
+        <p className='text-white'>TEST HERE {login ? 'true' : 'false'}</p>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -60,19 +101,9 @@ export const Navbar = () => {
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
-                    {navigation.map((item) => (
-                      <button
-                          type='button'
-                          onClick={(e)=>handleClick(e,item.href)}
-                          className={classNames(
-                          item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                          'px-3 py-2 rounded-md text-sm font-medium'
-                        )}
-                        aria-current={item.current ? 'page' : undefined}
-                      >
-                        {item.name}
-                      </button>
-                    ))}
+                    {navigation.map((item) => 
+                      item.show ? (BUTTON(item)) : null
+                    )}
                   </div>
                 </div>
               </div>
@@ -129,12 +160,12 @@ export const Navbar = () => {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="#"
+                          <Link
+                            onClick={(evt)=>logout(evt)}
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Sign out
-                          </a>
+                          </Link>
                         )}
                       </Menu.Item>
                     </Menu.Items>

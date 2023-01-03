@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export const Signup = () => {
   console.log('Signup')
@@ -182,7 +182,16 @@ export const Signup = () => {
               </form>
   
               <div className="mt-6">
-                <div className="relative">
+                
+              <div className="relative mb-[20px]">
+                <div className="text-sm">
+                  <Link to={`/login`} className="font-medium text-indigo-600 hover:text-indigo-500">
+                    Login Here
+                  </Link>
+                </div>
+              </div>
+
+              <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300" />
                   </div>

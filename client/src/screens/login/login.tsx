@@ -1,8 +1,8 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export const Login = () => {
-  console.log('Login')
+  // console.log('Login')
   // const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("")
@@ -27,7 +27,7 @@ export const Login = () => {
       redirect: 'follow'
     };
 
-    console.log(requestOptions)
+    // console.log(requestOptions)
 
     interface IResponse {
       error?:string,
@@ -36,11 +36,14 @@ export const Login = () => {
     }
 
     fetch("http://localhost:5000/signin", requestOptions)
-      .then(response => response.text())
+      .then(response => response.json())
       .then(result => {
-        let res = JSON.parse(result)
-        console.log(res.status)
-        if(res.status == 'FAILED') {
+        let res = result
+        console.log(res)
+        localStorage.setItem('token', res.token)
+        localStorage.setItem('user', JSON.stringify(res.user))
+        localStorage.setItem('isLogin', 'true')
+        if(res.status === 'FAILED') {
           // show error
           setResError(res.error)
           return
@@ -63,15 +66,10 @@ export const Login = () => {
               alt="Your Company"
             />
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              Or{' '}
-              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                start your 14-day free trial
-              </a>
-            </p>
+            
           </div>
   
-          <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
               <form className="space-y-6" onSubmit={(event)=>postUserInfo(event)}>
                 <div>
@@ -143,6 +141,16 @@ export const Login = () => {
               </form>
   
               <div className="mt-6">
+              
+              <div className="relative mb-[20px]">
+                <div className="text-sm">
+                  <Link to={`/signup`} className="font-medium text-indigo-600 hover:text-indigo-500">
+                    Sing up here
+                  </Link>
+                </div>
+              </div>
+
+
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300" />

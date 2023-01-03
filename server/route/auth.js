@@ -80,7 +80,8 @@ router.post('/signin', (req,res,next)=> {
           // return res.status(200).json({success:'password matched!', status:'SUCCESS'})
           // give the user a token 
           const tok = jwt.sign({_id:savedUser._id}, process.env.JWT_SECRET)
-          res.json({token:tok})
+          savedUser.password = null
+          res.json({token:tok, user:savedUser})
         } else {
           res.status(401).json({error:'password mismatch!', status:'FAILED'})
         }
