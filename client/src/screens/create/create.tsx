@@ -14,20 +14,33 @@ interface ICategoryType {
   href: string;
 }
 interface IAuthor {
-  name: string;
-  imageUrl: string;
+  _id:string;
+  name:string;
+  email:string;
+
 }
-interface IBlogCard {
+interface IAssigned {
+  name: string;
+  value: string;
+  avatar:string;
+}
+interface Ilabelled {
+  name: string;
+  value: string;
+}
+export interface IBlogCard {
   title: string;
   category: ICategoryType;
   description: string;
   date: string;
   datetime: string;
-  imageUrl: string;
+  imageURL: string;
   imageTitle: string;
   readingTime: string;
-  author: IAuthor;
   image: string;
+  assigned:IAssigned;
+  postedBy:IAuthor;
+  labelled:Ilabelled;
 }
 
 export const Create = () => {

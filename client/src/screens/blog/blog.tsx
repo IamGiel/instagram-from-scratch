@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react"
+import { IBlogCard } from "../create/create"
+import moment from 'moment'
+
 const posts = [
   {
     title: 'Boost your conversion rate',
@@ -55,7 +59,35 @@ const posts = [
   },
 ]
 
+
 export const Blog = () => {
+  const [blogs, setBlogs] = useState([])
+  // const [token, setToken] = useState("")
+
+  useEffect(() => {
+    const tok = localStorage.getItem('token')
+    console.log(tok)
+    getblogs(tok)
+  }, [])
+  
+  const getblogs = (token:any) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    const requestOptions:RequestInit = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+    };
+
+    fetch("http://localhost:5000/allposts", requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      console.log(result)
+      setBlogs(result)
+    })
+    .catch(error => console.log('error', error));
+  }
   return (
     <div className="relative bg-gray-50 px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
       <div className="absolute inset-0">
@@ -69,40 +101,41 @@ export const Blog = () => {
           </p>
         </div>
         <div className="mx-auto mt-12 grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
-          {posts.map((post) => (
-            <div key={post.title} className="flex flex-col overflow-hidden rounded-lg shadow-lg">
+          {blogs.map((post:IBlogCard, idx:any) => (
+            <div key={idx} className="flex flex-col overflow-hidden rounded-lg shadow-lg">
+              {/* <div>{JSON.stringify(post)}</div> */}
               <div className="flex-shrink-0">
-                <img className="h-48 w-full object-cover" src={post.imageUrl} alt="" />
+                <img className="h-48 w-full object-cover" src={post.imageURL} alt="media" />
               </div>
               <div className="flex flex-1 flex-col justify-between bg-white p-6">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-indigo-600">
-                    <a href={post.category.href} className="hover:underline">
-                      {post.category.name}
+                    <a href='#' className="hover:underline">
+                      {post.labelled.name}
                     </a>
                   </p>
-                  <a href={post.href} className="mt-2 block">
+                  <a href='#' className="mt-2 block">
                     <p className="text-xl font-semibold text-gray-900">{post.title}</p>
                     <p className="mt-3 text-base text-gray-500">{post.description}</p>
                   </a>
                 </div>
                 <div className="mt-6 flex items-center">
                   <div className="flex-shrink-0">
-                    <a href={post.author.href}>
-                      <span className="sr-only">{post.author.name}</span>
-                      <img className="h-10 w-10 rounded-full" src={post.author.imageUrl} alt="" />
+                    <a href='#'>
+                      <span className="sr-only">{post.assigned.avatar}</span>
+                      <img className="h-10 w-10 rounded-full" src={post.assigned.avatar} alt="" />
                     </a>
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-900">
-                      <a href={post.author.href} className="hover:underline">
-                        {post.author.name}
+                      <a href='#' className="hover:underline">
+                        {post.postedBy.name}
                       </a>
                     </p>
                     <div className="flex space-x-1 text-sm text-gray-500">
-                      <time dateTime={post.datetime}>{post.date}</time>
+                      <time dateTime={post.date}>{moment(`${post.date}`).format("MMM Do YY")}</time>
                       <span aria-hidden="true">&middot;</span>
-                      <span>{post.readingTime} read</span>
+                      <span>{post.assigned.name}</span>
                     </div>
                   </div>
                 </div>
