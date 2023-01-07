@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { IBlogCard } from "../create/create"
 import moment from 'moment'
 
@@ -63,10 +63,9 @@ const posts = [
 export const Blog = () => {
   const [blogs, setBlogs] = useState([])
   // const [token, setToken] = useState("")
-
   useEffect(() => {
     const tok = localStorage.getItem('token')
-    console.log(tok)
+    // console.log(tok)
     getblogs(tok)
   }, [])
   
@@ -83,7 +82,7 @@ export const Blog = () => {
     fetch("http://localhost:5000/allposts", requestOptions)
     .then(response => response.json())
     .then(result => {
-      console.log(result)
+      // console.log(result)
       setBlogs(result)
     })
     .catch(error => console.log('error', error));

@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import {
   CalendarIcon,
@@ -7,6 +7,7 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../App";
 const { faker } = require("@faker-js/faker");
 
 interface ICategoryType {
@@ -165,7 +166,7 @@ export const Create = () => {
   const [imageTitle, setImageTitle] = useState("");
   // const [image, setImage] = useState("");
   const [response, setResponse] = useState("");
-
+  
   return (
     <div className="m-[12px]">
       {response?.length > 0 && <p>{response}</p>}

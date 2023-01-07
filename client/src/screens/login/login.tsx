@@ -1,9 +1,11 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { UserContext } from "../../App"
 
-export const Login = () => {
+export const Login = () => {  
   // console.log('Login')
   // const [username, setUsername] = useState("")
+  const {state, dispatch} = useContext(UserContext)
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("")
   const [resError, setResError] = useState("")
@@ -48,6 +50,13 @@ export const Login = () => {
           setResError(res.error)
           return
         };
+
+        const payload = {
+          user:res.user,
+          isLogin:true
+        }
+        dispatch({type:'USER', payload})
+        // console.log(state)
         navigate('/blog')
         
         

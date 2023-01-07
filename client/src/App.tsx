@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect,createContext,useReducer,useContext} from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import {Route, Routes} from 'react-router-dom'
@@ -9,11 +9,14 @@ import { Create } from './screens/create/create';
 import { Blog } from './screens/blog/blog';
 import { Profile } from './screens/profile/profile';
 import { Signup } from './screens/signup/signup';
+import { initialState, IUserContext, reducer } from './reducer/userReducer';
 
-function App() {
+export const UserContext = createContext<any>({})
+
+const Routing = () => {
+  const {state,dispatch} = useContext(UserContext)
   return (
-    <div className="App">
-      <Navbar />
+    <>
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
@@ -22,6 +25,18 @@ function App() {
         <Route path="/create" element={<Create />} />
         <Route path="/blog" element={<Blog />} />
       </Routes>
+    </>
+  )
+}
+
+function App() {
+  const [state,dispatch] = useReducer(reducer,initialState)
+  return (
+    <div className="App">
+      <UserContext.Provider value={{state,dispatch}} >
+        <Navbar />
+        <Routing />
+      </UserContext.Provider>
     </div>
   );  
 }

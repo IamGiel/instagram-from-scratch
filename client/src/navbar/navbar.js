@@ -1,8 +1,9 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useContext, useEffect, useState } from 'react'
 import { Menu, Popover, Transition, Disclosure } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../App';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -14,19 +15,16 @@ export const Navbar = () => {
 
   const [user, setUser] = useState(null)
   const [login, setLogin] = useState(null)
-
+  const {state, dispatch} = useContext(UserContext)
   useEffect(() => {
     const loggedUser = localStorage.getItem('user');
     const isLoggedIn = localStorage.getItem('isLogin');
     setLogin(isLoggedIn)
     setUser(JSON.parse(loggedUser))
-    console.log(JSON.parse(loggedUser))
-    console.log(isLoggedIn)
     
   },[login])
 
-  
-  
+  useEffect(()=>{},[state])
 
   const handleClick = (evt, linkto) => {
     
@@ -46,7 +44,7 @@ export const Navbar = () => {
 
   const navigation = [
     {'name':'Home','href':'home', 'show':true},
-    {'name':'Create','href':'create', 'show':login ? true : 'false'},
+    {'name':'Create','href':'create', 'show':login ? state.isLoggedIn : 'false'},
     {'name':'Blog','href':'blog', 'show':true},
     {'name':'Login','href':'login', 'show':login ? 'false' : true},
     // {'name':'Signup','href':'signup','show':user?.name ? false : true}
@@ -72,7 +70,8 @@ export const Navbar = () => {
     <Disclosure as="nav" className="bg-gray-800 m-[12px] p-[12px]">
       {({ open }) => (
         <>
-        <p className='text-white'>TEST HERE {login ? 'true' : 'false'}</p>
+        <p className='text-white'>{JSON.stringify(state,null,4)}</p>
+        {/* <p className='text-white'>TEST HERE {login ? 'true' : 'false'}</p> */}
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
