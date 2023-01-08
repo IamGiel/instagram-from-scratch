@@ -168,7 +168,7 @@ export const Create = () => {
   const [response, setResponse] = useState("");
   
   return (
-    <div className="m-[12px]">
+    <div className="create-container">
       {response?.length > 0 && <p>{response}</p>}
       <form onSubmit={(event) => onSubmitBlog(event)} className="relative">
         <div className="p-[12px] overflow-hidden rounded-lg border border-gray-300 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">

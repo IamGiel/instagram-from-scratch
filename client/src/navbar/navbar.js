@@ -14,39 +14,38 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null)
-  const [login, setLogin] = useState(null)
+  const [loginStatus, setLoginStatus] = useState(false)
   const {state, dispatch} = useContext(UserContext)
   useEffect(() => {
     const loggedUser = localStorage.getItem('user');
-    const isLoggedIn = localStorage.getItem('isLogin');
-    setLogin(isLoggedIn)
+    const isLoggedIn = state?.user?._id ? true : false;
+    setLoginStatus(isLoggedIn)
     setUser(JSON.parse(loggedUser))
     
-  },[login])
+  },[loginStatus, state])
 
-  useEffect(()=>{},[state])
+  useEffect(()=>{console.log(state)},[state])
 
   const handleClick = (evt, linkto) => {
-    
     evt.preventDefault();
-    // console.log('asdfdsf '  ,evt)
-    
     navigate(`/${linkto}`);
   }
 
   const logout = (e) => {
     e.preventDefault()
+    dispatch({type:'USER', payload:null})
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     localStorage.removeItem('isLogin')
-    setLogin(false)
+    setLoginStatus(false)
+    navigate('/home')
   }
 
   const navigation = [
-    {'name':'Home','href':'home', 'show':true},
-    {'name':'Create','href':'create', 'show':login ? state.isLoggedIn : 'false'},
+    {'name':'Home','href':'home', 'show':loginStatus ? false : true},
+    {'name':'Create','href':'create', 'show':loginStatus ? true : false},
     {'name':'Blog','href':'blog', 'show':true},
-    {'name':'Login','href':'login', 'show':login ? 'false' : true},
+    // {'name':'Login','href':'login', 'show':!loginStatus ? true : false},
     // {'name':'Signup','href':'signup','show':user?.name ? false : true}
   ]
 
@@ -64,14 +63,14 @@ export const Navbar = () => {
       {item.name}
     </button>
     )
-  }
+  } 
 
   return (
-    <Disclosure as="nav" className="bg-gray-800 m-[12px] p-[12px]">
+    <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
-        <p className='text-white'>{JSON.stringify(state,null,4)}</p>
-        {/* <p className='text-white'>TEST HERE {login ? 'true' : 'false'}</p> */}
+        {/* <p className='text-white'>{JSON.stringify(state,null,4)}</p> */}
+        {/* <p className='text-white'>login status: {!loginStatus ? 'no login status' : 'user is logged in'}</p> */}
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -137,7 +136,9 @@ export const Navbar = () => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Menu.Item>
+                     {
+                      loginStatus && <>
+                         <Menu.Item>
                         {({ active }) => (
                           <Link
                             to={`/profile`}
@@ -149,12 +150,12 @@ export const Navbar = () => {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="#"
+                          <Link
+                            to={null}
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Settings
-                          </a>
+                          </Link>
                         )}
                       </Menu.Item>
                       <Menu.Item>
@@ -167,6 +168,23 @@ export const Navbar = () => {
                           </Link>
                         )}
                       </Menu.Item>
+                      </>
+                     }
+                     
+                     {
+                      !loginStatus && <>
+                         <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            to={'/login'}
+                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                          >
+                            Sign in
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      </>
+                     }
                     </Menu.Items>
                   </Transition>
                 </Menu>
