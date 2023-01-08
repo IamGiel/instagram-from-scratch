@@ -11,6 +11,7 @@ import { Profile } from './screens/profile/profile';
 import { Signup } from './screens/signup/signup';
 import { initialState, reducer } from './reducer/userReducer';
 import { PleaseLogin } from './screens/error-states/unauthorized/pleaseLogin';
+import { ProtectedRoute } from './Utils/protectedRoutes';
 
 export const UserContext = createContext<any>({})
 
@@ -27,12 +28,17 @@ const Routing = () => {
     <>
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path={state ? '/create' : 'loginrequired'} element={<Create />} />
         <Route path="/blog" element={<Blog />} />
+
+        {/* need to protect this routes */}
+        <Route path="/profile" element={<Profile />} />
+        <Route path={"/create"} element={<Create />} />
+        
+        {/* fallback route */}
         <Route path="/loginrequired" element={<PleaseLogin />} />
+        <Route path="/test" element={<ProtectedRoute ><p>Test here </p><p>hello</p></ProtectedRoute>} />
       </Routes>
     </>
   )

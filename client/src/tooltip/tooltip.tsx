@@ -1,10 +1,4 @@
-import { ReactNode } from "react"
-
-interface Props {
-    children?: ReactNode,
-    tooltipMsg?:ReactNode,
-    // any props that come into the component
-}
+import { Props } from "../interfaces/interfaces"
 
 export const Tooltip = ({ tooltipMsg, children }:Props) => {
     return (
