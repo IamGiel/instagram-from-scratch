@@ -42,10 +42,12 @@ export interface IBlogCard {
   assigned:IAssigned;
   postedBy:IAuthor;
   labelled:Ilabelled;
+  profilePic:string;
 }
 
 export const Create = () => {
   const navigate = useNavigate();
+  const {state, dispatch} = useContext(UserContext)
 
   const assignees = [
     {
@@ -100,7 +102,8 @@ export const Create = () => {
         assigned,
         labelled,
         date: new Date(),
-        postedBy: "This User",
+        postedBy: state.user.name,
+        profilePic:state.user.imageUrl,
         imageTitle,
       };
 

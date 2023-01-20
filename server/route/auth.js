@@ -34,11 +34,12 @@ router.get('/protected', AUTHENTICATEv2, (req,res,next)=> {
   res.send('Hello protected route')
 })
 router.post('/signup', (req,res)=> {
-  const {name, email, password } = req.body;
-  if(!name || !email || !password ) return res.status(422).json({error:'please add all fields required'}) 
+  const {name, email, password, imageUrl } = req.body;
+  console.log("signup backend ", req.body)
+  if(!name || !email || !password || !imageUrl ) return res.status(422).json({error:'please add all fields required'}) 
   User.findOne({email})
     .then((savedUser)=>{
-      console.log(savedUser)
+      console.log('saved user ===========> ', savedUser)
       if(savedUser){
         return res.status(401).json({error:'Your already signed up!', status:'FAILED'})
       }
@@ -46,7 +47,8 @@ router.post('/signup', (req,res)=> {
         const user = new User({
           email,
           password:hashedpw,
-          name
+          name,
+          imageUrl
         })
 
         user.save()

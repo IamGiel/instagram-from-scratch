@@ -10,6 +10,7 @@ const moment = require("moment");
 const { faker } = require('@faker-js/faker');
 
 router.get('/allposts',(req,res,next)=> {
+
   Post.find()
     .populate('postedBy', '_id name email')
     .then(posts=> {
@@ -18,6 +19,32 @@ router.get('/allposts',(req,res,next)=> {
     .catch(err=> {
       res.json(err)
     })
+})
+
+router.delete('/deleteAPost',AUTHENTICATEv2, (req,res,next)=> {
+  const postToDelete = req.body.postToDelete
+
+  Post.countDocuments({_id: postToDelete}, (err, count) =>{ 
+    if(count>0){
+        //document exists
+        Post.deleteOne({'_id':postToDelete})
+        .populate('postedBy')
+        .then(deleteThisPost=> {
+          res.json({
+            DELETE_STATUS:"SUCCESS"
+          })
+    })
+    .catch(err=> {
+      res.json(err)
+    })
+    } else {
+      res.json({
+        DELETE_STATUS:"FAIL",
+        reason:"Document does not exist"
+      })
+    }
+  }); 
+  
 })
 
 router.get('/mypost',AUTHENTICATEv2, (req,res,next)=> {
@@ -34,7 +61,7 @@ router.get('/mypost',AUTHENTICATEv2, (req,res,next)=> {
 
 router.post('/createPost', AUTHENTICATEv2, (req,res,next)=> {
 
-  const {title, description, postedBy, imageURL, date, labelled, assigned, imageTitle } = req.body
+  const {title, description, postedBy, imageURL, date, labelled, assigned, imageTitle, profilePic } = req.body
   const user = req.user;
 
   console.log(req.body)
@@ -42,7 +69,7 @@ router.post('/createPost', AUTHENTICATEv2, (req,res,next)=> {
   if(user && user.password){
     user.password = undefined;
   }
-  if(!title || !description || !imageURL|| !imageTitle|| !date|| !labelled|| !assigned) {
+  if(!title || !description || !imageURL|| !imageTitle|| !date|| !labelled|| !assigned|| !profilePic) {
     return res.json({error:'Missing required fields', status:'FAILED'})
   }
 
@@ -59,7 +86,8 @@ router.post('/createPost', AUTHENTICATEv2, (req,res,next)=> {
       imageURL,
       date,
       labelled,
-      assigned
+      assigned,
+      profilePic
     })
 
     console.log('testing here  ', post)

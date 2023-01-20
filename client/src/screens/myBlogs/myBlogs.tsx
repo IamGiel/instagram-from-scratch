@@ -5,19 +5,22 @@ import { heartIcon } from '../../assets/heartIcon'
 import { viewIcon } from '../../assets/viewIcon'
 import { threedotHorizontalIcon } from '../../assets/threedotHorizontalIcon'
 import { Dropdown } from '../../components/dropdown'
-import { deleteAPost, getAllPost } from '../../fetch/apiCalls'
+import { deleteAPost, getAllPost, getMyPosts } from '../../fetch/apiCalls'
 import { UserContext } from '../../App'
+import { sleep } from '../../Utils/sleep'
+import { spinnerIcon } from '../../assets/spinnerIcon'
+import { ribbon } from '../../assets/ribbon'
 
-export const Blog = () => {
+export const MyBlogs = () => {
   const [blogs, setBlogs] = useState([])
   const {state, dispatch} = useContext(UserContext)
+  const [isLoading, setisLoading] = useState(false)
   useEffect(() => {
     const tok = localStorage.getItem('token')
     // console.log(state)
-    getblogs()
+    getMyblogs()
   }, [])
 
-  
 
   const onDeleteBlog = (postToDelete:any) => {    
     let tok = localStorage.getItem("token");
@@ -29,37 +32,53 @@ export const Blog = () => {
       postToDelete,
       headers
     }
+
+   
     deleteAPost(payload, headers)
     .then(res => {
       console.log(res)
-      getblogs()
+      getMyblogs()
     })
     .catch(error => console.log('error', error));
     
   }
 
-  const getblogs = () => {
+  const getMyblogs = () => {
+    let tok = localStorage.getItem("token");
+    const headers = { 
+      'Authorization': `Bearer ${tok}`, 
+      'Content-Type': 'application/json'
+    }
     // loading true
-    getAllPost().then((res)=> {
-      // loading false
-      console.log('getting all blogs using apiCAll ', res)
-      setBlogs(res)
-    }).catch((err)=> {
-      // loading false
-      console.log(err)
+    setisLoading(true)
+    sleep(1500).then(res=> {
+      console.log(res)
+      getMyPosts(headers)
+      .then((res)=> {
+        // loading false
+        setisLoading(false)
+        console.log('getting all blogs using apiCAll ', res)
+        setBlogs(res)
+      }).catch((err)=> {
+        // loading false
+        setisLoading(false)
+        console.log(err)
+      })
     })
+   
   }
 
   return (
    <>
-    {blogs && <div className="blog-container">
+    {blogs && !isLoading && <div className="blog-container">
+      <div className='ribbon'>{ribbon('hey there Ribbon here!')}</div>
     <div className="relative bg-gray-50 px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
       <div className="absolute inset-0">
         <div className="h-1/3 bg-white sm:h-2/3" />
       </div>
       <div className="relative mx-auto w-7xl">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">From the blog</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">My Library</h2>
           <p className="mx-auto mt-3 max-w-2xl text-xl text-gray-500 sm:mt-4">
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsa libero labore natus atque, ducimus sed.
           </p>
@@ -130,7 +149,11 @@ export const Blog = () => {
         </div>
       </div>
     </div>
-   </div>}
+    </div>}
+    {isLoading && <div className='loaderContainer flex flex-row justify-center p-[12px]'>
+      {spinnerIcon()}
+    </div>
+  }
    </>
   )
 }

@@ -33,23 +33,27 @@ export const Navbar = () => {
 
   const logout = (e) => {
     e.preventDefault()
-    dispatch({type:'USER', payload:null})
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     localStorage.removeItem('isLogin')
+    localStorage.clear()
+    dispatch({type:'CLEAR'})
+    
     setLoginStatus(false)
     navigate('/home')
   }
 
   const navigation = [
-    {'name':'Home','href':'home', 'show':loginStatus ? false : true},
+    {'name':'Home','href':loginStatus ? 'blog' : 'home', 'show':loginStatus ? false : true},
     {'name':'Create','href':'create', 'show':loginStatus ? true : false},
-    {'name':'Blog','href':'blog', 'show':true},
+    {'name':'Blogs','href':'blog', 'show':true},
+    {'name':'My Library','href':'myblogs', 'show':loginStatus ? true : false}
     // {'name':'Login','href':'login', 'show':!loginStatus ? true : false},
     // {'name':'Signup','href':'signup','show':user?.name ? false : true}
   ]
 
   const BUTTON = (item) => {
+   
     return (
       <button
         type='button'
@@ -71,7 +75,7 @@ export const Navbar = () => {
         <>
         {/* <p className='text-white'>{JSON.stringify(state,null,4)}</p> */}
         {/* <p className='text-white'>login status: {!loginStatus ? 'no login status' : 'user is logged in'}</p> */}
-          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div className="mx-auto w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
@@ -99,9 +103,7 @@ export const Navbar = () => {
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
-                    {navigation.map((item) => 
-                      item.show ? (BUTTON(item)) : null
-                    )}
+                    {navigation.map((item) => item.show ? (BUTTON(item)) : null)}
                   </div>
                 </div>
               </div>
@@ -115,17 +117,29 @@ export const Navbar = () => {
                 </button>
 
                 {/* Profile dropdown */}
-                <Menu as="div" className="relative ml-3">
+                <Menu as="div" className="relative ml-3 flex flex-row gap-[12px]">
                   <div>
-                    <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
-                    </Menu.Button>
+                    {!state && 
+                      <Menu.Button className="p-[12px] m-[12px] flex rounded-full bg-gray-800 text-sm ">
+                        <span className="text-white">Get Started</span>
+                        
+                        
+                      </Menu.Button>
+                    }
+                    {state && 
+                      <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <span className="sr-only">Open user menu</span>
+                        
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          src={state.user.imageUrl}
+                          alt=""
+                        />
+                      </Menu.Button>
+                    }
+                    
                   </div>
+                  {state && state.user && state.user.name && <div className='text-white'>Hello, {state?.user.name}</div>}
                   <Transition
                     as={Fragment}
                     enter="transition ease-out duration-100"

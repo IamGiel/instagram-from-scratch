@@ -7,7 +7,12 @@ export const reducer = (state:any,action:IAction) => {
   console.log(state)
   if(action?.type === 'USER'){
     return action.payload;
-  } else {
+  } 
+  if(action?.type === 'CLEAR'){
+    return null;
+  } 
+  
+  else {
     return state
   }
 }

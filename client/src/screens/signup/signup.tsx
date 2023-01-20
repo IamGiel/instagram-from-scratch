@@ -3,14 +3,19 @@ import { Link, useNavigate } from "react-router-dom"
 import { Tooltip } from "../../tooltip/tooltip"
 
 export const Signup = () => {
-  console.log('Signup')
+  // console.log('Signup')
+  
+  const CLOUD_NAME = `gelcloudinary`;
+  const APP_NAME = `instagram-clone`;
+
   const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("")
+  const [imageURL, setimageURL] = useState("")
   const [resError, setResError] = useState("")
+  const [saveFile, setSaveFile] = useState("")
   // const [rememberMe, setRememberMe] = useState("")
   const navigate = useNavigate();
-
   const isEmailOk = (emailAdress:string) => {
     const emailRegex = new RegExp(/^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/, "gm");
     const isValidEmail = emailRegex.test(emailAdress);
@@ -22,8 +27,32 @@ export const Signup = () => {
     } 
   }
 
+  const onSelectPhotoFile = (ev:any, photo:any) => {
+    ev.preventDefault()
+    console.log("this is file ", photo)
+    const data = new FormData();
+    data.append("file", photo);
+    data.append("upload_preset", APP_NAME);
+    data.append("clound_name", CLOUD_NAME);
+
+    fetch(`https://api.cloudinary.com/v1_1/gelcloudinary/upload`, {
+      method: "post",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((imgData) => {
+        console.log(imgData);
+        setimageURL(imgData.url); 
+        
+      })
+      .catch((err) => console.log(err));
+
+      
+  }
+
   const postUserInfo = async (ev:any) => {
     ev.preventDefault()
+    console.log("this is image URL ", imageURL)
     let myHeaders = {
       'Content-Type': 'application/json',
     }
@@ -34,11 +63,12 @@ export const Signup = () => {
       console.log('emial is INVALID')
       return false;
     }
-    
+
     let raw = JSON.stringify({
       "name": name,
       "email": email,
-      "password": password
+      "password": password ,
+      "imageUrl":imageURL
     });
 
     let requestOptions:RequestInit  = {
@@ -47,8 +77,6 @@ export const Signup = () => {
       body: raw,
       redirect: 'follow'
     };
-
-    console.log(requestOptions)
 
     interface IResponse {
       error?:string,
@@ -150,6 +178,22 @@ export const Signup = () => {
                       className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                       onChange={(e)=>setPassword(e.target.value)}
                       value={password}/>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="imageURL" className="block text-sm font-medium text-gray-700">
+                    Profile Photo
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="imageURL"
+                      name="imageURL"
+                      type="file"
+                      autoComplete="current-imageURL"
+                      className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                      onChange={(e)=> onSelectPhotoFile(e, e?.target?.files?.[0])}
+                      />
                   </div>
                 </div>
   

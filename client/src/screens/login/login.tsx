@@ -154,7 +154,7 @@ export const Login = () => {
               <div className="relative mb-[20px]">
                 <div className="text-sm">
                   <Link to={`/signup`} className="font-medium text-indigo-600 hover:text-indigo-500">
-                    Sing up here
+                    Sign up here
                   </Link>
                 </div>
               </div>
